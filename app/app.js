@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { createStore, combineReducers } from 'redux';
 import { Text, View, Image, ScrollView, Button, Platform } from 'react-native';
-import { StackNavigator, addNavigationHelpers } from 'react-navigation';
+import { StackNavigator, StackRouter, addNavigationHelpers } from 'react-navigation';
 import { Provider, connect } from 'react-redux';
 
 const S1 = () => <View><Text>S1 text</Text></View>;
@@ -16,16 +16,21 @@ const AppNav = StackNavigator(
   }
 );
 
-const App = (props) =>
-  <AppNav navigation={addNavigationHelpers({dispatch: props.dispatch, state: props.nav})} />;
-const AppCont = connect(state => ({nav: state.nav}))(App);
+@connect(state => ({nav: state.nav}))
+class App extends Component {
+  render() {
+    return (
+      <AppNav navigation={addNavigationHelpers({dispatch: this.props.dispatch, state: this.props.nav})} />
+    );
+  }
+}
 
 const navReducer = (state, action) => (AppNav.router.getStateForAction(action, state) || state);
 const rootReducer = combineReducers({nav: navReducer});
 
 const CoreApp = props =>
   <Provider store={createStore(rootReducer)}>
-    <AppCont />
+    <App />
   </Provider>
 
 const CoreNav = StackNavigator(
