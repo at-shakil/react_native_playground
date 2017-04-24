@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
 import { createStore, combineReducers } from 'redux';
-import { Text, View, Image, ScrollView, Button, Platform, Linking } from 'react-native';
-import { StackNavigator, StackRouter, addNavigationHelpers } from 'react-navigation';
+import {
+  Text, View, Image, ScrollView, Button, Platform, Linking
+  } from 'react-native';
+import {
+  StackNavigator, StackRouter, addNavigationHelpers, CardStack, createNavigator
+  } from 'react-navigation';
 import { Provider, connect } from 'react-redux';
 
 const S1 = () => <View><Text>S1 text</Text></View>;
@@ -17,7 +21,7 @@ class AppNav extends Component {
   static router = StackRouter(
     {
       S1: {screen: S1, path: 's1'},
-      S2: {screen: S2, path: 's2'},
+      // S2: {screen: S2, path: 's2'},
       S3: {screen: S3, path: 's3'}
     },
     {
@@ -29,10 +33,9 @@ class AppNav extends Component {
     console.warn(url);
     const
       { navigation } = this.props,
-      { state, dispatch } = navigation,
-      uriPrefix = "http://localhost",
-      params = {},
-      Component = AppNav.router.getComponentForState(state);
+      { dispatch } = navigation,
+      uriPrefix = Platform.OS == 'android' ? 'http://localhost/' : 'http://',
+      params = {};
     let
       path = url.split(uriPrefix)[1];
     if(!path) {
@@ -78,8 +81,7 @@ class AppNav extends Component {
 class App extends Component {
   render() {
     const
-      { dispatch, nav } = this.props,
-      uriPrefix = Platform.OS == 'android' ? 'http://localhost/' : 'http://';
+      { dispatch, nav } = this.props;
 
     return (
       <AppNav
