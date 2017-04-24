@@ -19,8 +19,15 @@ const AppNav = StackNavigator(
 @connect(state => ({nav: state.nav}))
 class App extends Component {
   render() {
+    const
+      { dispatch, nav } = this.props,
+      uriPrefix = Platform.OS == 'android' ? 'http://localhost/' : 'http://';
+
     return (
-      <AppNav navigation={addNavigationHelpers({dispatch: this.props.dispatch, state: this.props.nav})} />
+      <AppNav
+        navigation={addNavigationHelpers({dispatch: this.props.dispatch, state: this.props.nav})}
+        //uriPrefix={uriPrefix}
+      />
     );
   }
 }
@@ -28,20 +35,9 @@ class App extends Component {
 const navReducer = (state, action) => (AppNav.router.getStateForAction(action, state) || state);
 const rootReducer = combineReducers({nav: navReducer});
 
-const CoreApp = props =>
+const RootApp = props =>
   <Provider store={createStore(rootReducer)}>
     <App />
-  </Provider>
+  </Provider>;
 
-const CoreNav = StackNavigator(
-  {
-    CoreApp: {screen: CoreApp, path: 'core'}
-  },
-  {
-    containerOptions: {
-      URIPrefix: Platform.OS == 'android' ? 'http://localhost/' : 'http://'
-    }
-  }
-);
-
-export default CoreNav;
+export default RootApp;
